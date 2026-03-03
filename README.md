@@ -1,86 +1,111 @@
-# Primeros pasos en Solana
-![Banner](./images/SolanaBanner.jpg)
-Solana es una blockchain de capa 1, es decir, cuenta con su propia infraestructura y no depende de otras blockchains para funcionar. Se encuentra orientada al alto rendimiento, y fue creada para soportar aplicaciones descentralizadas a gran escala con costos mínimos y confirmaciones casi inmediatas. Su diseño prioriza la eficiencia en la ejecución y la paralelización de transacciones.
+[💄 BeautyChain — Gestión de Tienda de Cosméticos en Solana
 
-Rust es el lenguaje principal para desarrollar programas en Solana. A través de él se implementa la lógica on-chain utilizando el modelo de cuentas y programas de la red, permitiendo construir contratos inteligentes seguros, eficientes y altamente optimizables.
+BeautyChain es un programa on-chain desarrollado en Rust con el framework Anchor sobre la blockchain de Solana.
 
-Puedes comenzar dándole Fork a este repositorio (abajo te explicamos como 👇)
+Permite a dueños de tiendas de cosméticos gestionar su negocio de forma descentralizada, segura e inmutable.
 
-Asegúrate de clonar este repositorio a tu cuenta usando el botón **`Fork`**.
+📌 ¿Qué hace el proyecto?
 
-![fork](./images/fork.png)
+BeautyChain implementa un sistema de gestión para una tienda de cosméticos que permite:
 
-* Puedes renombrar el repositorio a lo que sea que se ajuste con tu proyecto.
+Crear una tienda vinculada a tu wallet (propietario)
 
-## Solana Playground
-Solana Playground es un entorno de desarrollo online que permite escribir, compilar, desplegar y probar programas de Solana directamente desde el navegador, sin necesidad de instalar herramientas locales como Rust, Solana CLI o Anchor.
+Registrar productos (labiales, bases, perfumes, etc.)
 
-![Playground](./images/playground.png)
+Actualizar precios
 
-Para abrir el **Playground** solo es necesario dar clic 👉 [Aquí](https://beta.solpg.io)
+Modificar stock
 
-## Configuración del entorno
+Eliminar productos
 
-Primero conectaremos el entorno con la devnet, lo que tambien procederá a la creación de una wallet. Para eso daremos clic en donde dice **Not Conected**:
+Consultar información almacenada en la blockchain
 
-![playground1](./images/playground1.png)
+Cada tienda y cada producto son cuentas derivadas (PDA), lo que garantiza unicidad y seguridad.
 
-Saldrá la siguiente ventana donde daremos en el botón **Continue**:
+🏗️ Arquitectura
+Owner (Wallet)
+    │
+    └── Tienda (PDA)
+            │
+            ├── Producto A (PDA)
+            ├── Producto B (PDA)
+            └── Producto C (PDA)
+            
+🧱 Estructuras Principales
 
-![wallet](./images/wallet.png)
 
-Como resultado se mostrará la siguiente información:
+🏪 Tienda
+Campo	Tipo	Descripción
+owner	Pubkey	Wallet del propietario
+nombre	String	Nombre de la tienda
+ubicacion	String	Dirección física
+hora_apertura	u8	Hora de apertura
+hora_cierre	u8	Hora de cierre
 
-![status](./images/status.png)
+💋 Producto
+Campo	Tipo	Descripción
+tienda	Pubkey	Tienda a la que pertenece
+nombre	String	Nombre del producto
+categoria	String	Ej: Labial, Base, Perfume
+precio	u64	Precio del producto
+stock	u16	Cantidad disponible
 
-* En verde: el estado de la conexión y el entorno al que se encuentra conectado
+⚙️ Instrucciones del Programa
+Instrucción	Descripción
+crear_tienda(nombre, ubicacion, apertura, cierre)	Crea la tienda vinculada al propietario
+agregar_producto(nombre, categoria, precio, stock)	Registra un nuevo producto
+actualizar_precio(nombre, nuevo_precio)	Cambia el precio del producto
+actualizar_stock(nombre, cantidad)	Modifica inventario
+eliminar_producto(nombre)	Cierra la cuenta del producto
+🔐 PDA (Program Derived Addresses)
 
-* En amarillo: la la dirección de la wallet conectada
+Las cuentas se derivan con semillas:
 
-* En azul: la cantidad de tokens en la wallet
+Tienda:
 
-> ℹ️ ¿Quieres ver el ejemplo de un "Hola Mundo" en Solana?. Da clic aquí: 👉 [Ver Ejemplo](./build-deploy/README.md)
+["tienda", nombre_tienda, owner_pubkey]
 
-> ℹ️ ¿Cuentas con una Wallet de [Phantom](https://phantom.com/) que deseas importar?, Da clic aquí para ver como hacerlo: 
+Producto:
 
-👉 [Como Importar una Wallet](./import-key-a-playground/README.md)
+["producto", nombre_producto, owner_pubkey]
 
-## ¿Listo para empezar?
+Esto garantiza que:
 
-El primer paso es hacer `fork` al repositorio. Ya con el repositorio en tu cuenta lo siguiente que debes hacer es entrar a la carpeta `proyecto` y obtener el `permalink`:
+Cada propietario tiene su propia tienda única.
 
-![permalink](./images/permalink.png)
+No pueden existir productos duplicados con el mismo nombre.
 
-El cual uniremos con el siguiente enlace en nuestro navegador de preferencia:
+Solo el dueño puede modificar su tienda.
 
-```url
-https://beta.solpg.io/
-```
+🚀 Cómo usar el proyecto en Solana Playground
 
-Lo que nos dará algo parecido a:
+1️⃣ Abrir Solana Playground
+2️⃣ Hacer fork o pegar el contenido en src/lib.rs
+3️⃣ Conectar wallet en Devnet
+4️⃣ Presionar Build
+5️⃣ Presionar Deploy
+6️⃣ Ir a la sección Test
 
-![url](./images/url.png)
+📌 Flujo de ejemplo
+1. crear_tienda("BeautyStore", "Av. Juarez 123", 9, 20)
 
-Al pulsar enter seremos enviados al `Solana Playground` con nuestro proyecto abierto:
+2. agregar_producto("Labial Dior", "Labial", 1500, 25)
 
-![pg](./images/pg.png)
+3. actualizar_stock("Labial Dior", 40)
 
-Para guardarlo solo damos clic en el boton `import` y asignamos un nombre:
+4. actualizar_precio("Labial Dior", 1700)
 
-![import](./images/import.png)
+5. eliminar_producto("Labial Dior")
+🛠️ Tecnologías
 
-## ¿Como actualizo mi repositorio?
+Solana — Blockchain de alta velocidad
 
-Una vez que realices cambios o termines tu proyecto, es necesario que **copies todo el código**, ya con el código en el portapapeles nos dirigimos nuevamente a la carpeta proyecto de tu repositorio de github **donde se obtuvo el `permalink`**, donde entraremos al carpeta `src` y al archivo `lib.rs`:
+Anchor — Framework para contratos en Solana
 
-![edit](./images/edit.png)
+Rust — Lenguaje del programa
 
-En `lib.rs` presionaremos el ícono en forma de lapiz (esquina superior derecha de la imagen 👆)
+👩🏻‍💻 Autora
 
-Nuevamente seleccionamos todo el código pero ahora presionamos `ctrl + v` para pegar el código del `Playground`. Ya realizados los cambios presionamos el botón `Commit changes`:
+Proyecto desarrollado por Valeria Gallegos como parte de su práctica y aprendizaje en desarrollo Web3 sobre Solana.
 
-![commit](./images/commit.png)
-
-Nos aparecerá un menú de confirmación donde nuevamente presionamos el botón `Commit changes`:
-
-![commit2](./images/commit2.png)
+](https://github.com/ValeriaGaEu/Proyecto-Cosmeticos/blob/main/proyecto/src/lib.rs)
